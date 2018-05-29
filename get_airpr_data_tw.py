@@ -41,17 +41,43 @@ reach = decoded['content_items'][0]['reach']
 
 # Define string for the slack message
 for x in decoded['content_items']:
-    string = x['date'] + '  *TransferWise*   ' + x['publication'] + '    ' + x['story_level'] + '    <' + x['url'] + '>\n\n  ' + '_' + x['title'] + '_ \n\n' + '```' + x['summary'] + '```'
+    string = {"attachments": [
+                {
+                    "fallback": x['summary'],
+                    "color": "#2eb886",
+                    "pretext": '  *TransferWise* has a new story',
+                    "author_name": x['publication'],
+                    "author_link": "http://flickr.com/bobby/",
+                    "author_icon": "http://flickr.com/icons/bobby.jpg",
+                    "title": x['title'],
+                    "title_link": x['url'],
+                    "text": x['summary'],
+                    "fields": [
+                        {
+                            "title": "Level",
+                            "value": x['story_level']
+                        },
+                        {
+                            "title": "Date",
+                            "value": x['date']
+                        }
+                    ],
+                    "thumb_url": "https://images.ctfassets.net/3ouphkrynjol/3ZMmu4XHq8igU8YSyEM4Cu/0fe18dcdbb99d220d1e2ee5f2717a902/airpr.com.png",
+                    "footer": "AirPR",
+                    "ts": 123456789
+                }
+            ]
+        }   
 
 # Define posting to a Slack channel
 def send_message_to_slack(text):
-    post = {"text": "{0}".format(text)}
-
+    post = string
+ 
     try:
         json_data = json.dumps(post)
-        req = request.Request("SLACK-INCOMING-WEBHOOK-URL",
+        req = request.Request("https://hooks.slack.com/services/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",
                               data=json_data.encode('ascii'),
-                              headers={'Content-Type': 'application/json'})
+                              headers={'Content-Type': 'application/json'}) 
         resp = request.urlopen(req)
     except Exception as em:
         print("EXCEPTION: " + str(em))
