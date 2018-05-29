@@ -44,30 +44,40 @@ for x in decoded['content_items']:
     string = {"attachments": [
                 {
                     "fallback": x['summary'],
-                    "color": "#2eb886",
+                    "color": "#37517e",
                     "pretext": '  *TransferWise* has a new story',
                     "author_name": x['publication'],
-                    "author_link": "http://flickr.com/bobby/",
-                    "author_icon": "http://flickr.com/icons/bobby.jpg",
+                    "author_link": x['host'] ,
+                    "author_icon": "",
                     "title": x['title'],
                     "title_link": x['url'],
-                    "text": x['summary'],
+                    "text": '_'+x['summary']+'_',
                     "fields": [
                         {
                             "title": "Level",
-                            "value": x['story_level']
+                            "value": x['story_level'],
+                            "short": 'true'
                         },
                         {
                             "title": "Date",
-                            "value": x['date']
+                            "value": x['date'],
+                            "short": 'true'
+                        },
+                        {
+                            "title": "Country",
+                            "value": x['country'],
+                            "short": 'true'
+                        },
+                        {
+                            "title": "Message",
+                            "value": x['messages'],
+                            "short": 'true'
                         }
-                    ],
-                    "thumb_url": "https://images.ctfassets.net/3ouphkrynjol/3ZMmu4XHq8igU8YSyEM4Cu/0fe18dcdbb99d220d1e2ee5f2717a902/airpr.com.png",
-                    "footer": "AirPR",
-                    "ts": 123456789
+                    ]
                 }
             ]
         }   
+
 
 # Define posting to a Slack channel
 def send_message_to_slack(text):
