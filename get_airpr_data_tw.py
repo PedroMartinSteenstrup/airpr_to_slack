@@ -45,7 +45,7 @@ for x in decoded['content_items']:
                 {
                     "fallback": x['summary'],
                     "color": "#37517e",
-                    "pretext": '  *TransferWise* has a new story',
+                    "pretext": '  *YOUR-COMPANY* has a new story',
                     "author_name": x['publication'],
                     "author_link": x['host'] ,
                     "author_icon": "",
