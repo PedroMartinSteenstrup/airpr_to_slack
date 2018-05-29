@@ -11,7 +11,7 @@ import time
 wakeup = time.time()
 
 # Get credentials
-profile_id = 'PROFILE-ID-FOR-REQUEST'
+profile_id = 'YOUR-CUSTOMER-ID'
 token = base64.b64encode(keyring.get_password('AirPR', 'token').encode('utf-8'))
 token = 'Bearer ' + keyring.get_password('AirPR', 'token')
 
