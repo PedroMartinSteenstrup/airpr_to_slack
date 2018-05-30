@@ -12,7 +12,7 @@ def send_message_to_slack(text):
 
     try:
         json_data = json.dumps(post)
-        req = request.Request("https://hooks.slack.com/services/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",
+        req = request.Request("YOUR WEBHOOK",
                               data=json_data.encode('ascii'),
                               headers={'Content-Type': 'application/json'})
         resp = request.urlopen(req)
@@ -28,7 +28,7 @@ while True:
     params = {'from': '2018-04-18',
               'to': 'today',
               'per_page': '1'}
-    profile_id = '3213'
+    profile_id = 'YOUR CUSTOMER ID'
     token = 'Bearer ' + keyring.get_password('AirPR', 'token')
     headers = {"Authorization": token}
 
