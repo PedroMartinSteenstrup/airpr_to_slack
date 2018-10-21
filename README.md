@@ -7,9 +7,10 @@ This version is made for Python 3.
 
 ![how_it_looks](https://github.com/PedroMartinSteenstrup/airpr_to_slack/blob/master/AirPRtoSlack.JPG?raw=true)
 
-# Improvement needed
-1. At the moment, the script only fetches 1 item at a time, by checking if the id of the latest available article is higher than the previously recorded one. This obviously would fail to fetch all articles in the event that 2 articles were added to the AirPR analyst simultaneously. One possibility would be to record all fetched article id's and have the readlines() go through the full list, and if missing, post content.
+# What it does
+1. Query the latest article available on AirPR's API every X seconds (triggered by CRON on server)
+2. Check it against previously store list of IDs in PostgreSQL
+3. Post content to slack channel if deemed relevant
 
-2. `<strong>Keyword</strong>` is forwarded in the field 'summary' and doesn't look very neat
-
-3. Requires the output.txt doc to be created and a `1` entered before the first initialisation. here I've cheated and just manually created the doc before launching the script
+# What it doesn't do (and should)
+1. If two or more article are added simultaneously on AirPR's platform, only most recent one will be picked up. Ideally it should be able to handle several newly added articles, not just the most recent one.
