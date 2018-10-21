@@ -14,3 +14,8 @@ This version is made for Python 3.
 
 # What it doesn't do (and should)
 1. If two or more article are added simultaneously on AirPR's platform, only most recent one will be picked up. Ideally it should be able to handle several newly added articles, not just the most recent one.
+
+# Stuff it needs to run without change
+1. PostgreSQL and a table like reports.slack_press_hits with 2 columns (id, provider)
+2. Server environment on Python 3
+3. Well, most importantly, a service contract with AirPR
