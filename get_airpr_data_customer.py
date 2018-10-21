@@ -1,97 +1,181 @@
-# Get depedencies
+#!/usr/bin/env python3
+# coding: utf-8
+
+# Get dependencies
 import keyring
 import requests
 import json
-from urllib import request
 from datetime import date
-import time
+import datetime
+import sys
+import psycopg2
 
-# Define posting to a Slack channel
-def send_message_to_slack(text):
-    post = string
+# Define a few stuff
+db_password = keyring.get_password('YOUR_STUFF_HERE', 'YOUR_STUFF_HERE')
+provider = "YOUR_BRAND"
 
+
+# posting to a Slack channel
+def slackit():
+    webhook_url = 'YOUR_WEBHOOK_URL'
+    slack_data = string
+    response = requests.post(
+        webhook_url, data=json.dumps(slack_data),
+        headers={'Content-Type': 'application/json'}
+    )
+    if response.status_code != 200:
+        raise ValueError(
+            'Request to slack returned an error %s, the response is:\n%s'
+            % (response.status_code, response.text)
+        )
+    insert_id()
+
+
+# checking if ID in the API call matches an existing stored id
+def check_id():
     try:
-        json_data = json.dumps(post)
-        req = request.Request("YOUR WEBHOOK",
-                              data=json_data.encode('ascii'),
-                              headers={'Content-Type': 'application/json'})
-        resp = request.urlopen(req)
-    except Exception as em:
-        print("EXCEPTION: " + str(em))
+        cur = conn.cursor()
+        cur.execute("SELECT id FROM reports.slack_press_hits WHERE provider = 'YOUR_BRAND' ORDER BY id DESC LIMIT 5")
+        result = cur.fetchall()[0]
+        if int(result[0]) == int(idValue):
+            cur.close()
+            conn.close()
+            pass
+        else:
+            filter_result()
+    except OSError as err:
+        print("OS error: {0}".format(err))
+    except ValueError:
+        print("Could not convert data to an integer.")
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
 
 
-while True:
-    today = str(date.today())
+# filtering if the content is relevant
+def filter_result():
+    if story == "uninfluential" and reach < 1000000:
+        insert_id()
+    elif coverage_type == 'newswire' or coverage_type == 'owned':
+        insert_id()
+    elif country == 'United States' and reach < 1500000:
+        insert_id()
+    elif country == 'United Kingdom' and reach < 1000000:
+        insert_id()
+    elif country == 'Spain' and reach < 1000000:
+        insert_id()
+    elif country == 'Germany' and reach < 1000000:
+        insert_id()
+    elif country == 'France' and reach < 1000000:
+        insert_id()
+    elif country == 'Japan' and reach < 1000000:
+        insert_id()
+    elif country == 'Poland' and reach < 1000000:
+        insert_id()
+    elif country == 'Italy' and reach < 1000000:
+        insert_id()
+    elif country == 'Estonia' and reach < 500000:
+        insert_id()
+    elif country == 'Russian Federation' and reach < 1000000:
+        insert_id()
+    elif country == 'Ukraine' and reach < 1000000:
+        insert_id()
+    elif reach < 1000000:
+        insert_id()
+    else:
+        slackit()
 
-    wakeup = time.time()
-    today = str(date.today())
-    params = {'from': '2018-04-18',
-              'to': 'today',
-              'per_page': '1'}
-    profile_id = 'YOUR CUSTOMER ID'
-    token = 'Bearer ' + keyring.get_password('AirPR', 'token')
+
+# storing the ID in the db
+def insert_id():
+    cur = conn.cursor()
+    inserts = "INSERT INTO reports.slack_press_hits (id, provider) VALUES (%s, %s);"
+    data_inserts = (idValue, provider)
+    cur.execute(inserts, data_inserts)
+    cur.close()
+    conn.close()
+
+
+try:
+    to_date = str(date.today())
+    from_date = str(date.today() - datetime.timedelta(1))
+    params = {'from': from_date,
+              'to': to_date,
+              'per_page': '1',
+              'sort': "date"}
+profile_id = 'YOUR_PROFILE_ID_ON_AIRPR'
+    token = 'Bearer ' + keyring.get_password('YOUR_STUFF_HERE', 'YOUR_STUFF_HERE')
     headers = {"Authorization": token}
-
     r = requests.get('https://analyst.airpr.com/api/v1/profiles/' + profile_id + '/content_items',
                      params=params,
                      headers=headers)
-    print("Calling AirPR")
+    conn = psycopg2.connect(database='YOUR_DATABASE',
+                            user='YOUR_DB_USERNAME',
+                            password=db_password,
+                            host='YOUR_HOST',
+                            port=YOUR_PORT)
+    conn.set_session(autocommit=True)
 
-    data = r.json()
-    decoded_data = json.dumps(data)
-    decoded = json.loads(decoded_data)
-    print("decode data")
+    decoded = json.loads(json.dumps(r.json()))
     idValue = decoded['content_items'][0]['id']
-    print("retrieving_id"),
-
-    for x in decoded['content_items']:
-        string = {"attachments": [
+    story = decoded['content_items'][0]['story_level']
+    reach = format(decoded['content_items'][0]['reach'], ",")
+    country = decoded['content_items'][0]['country']
+    coverage_type = decoded['content_items'][0]['article_type']
+    summary = decoded['content_items'][0]['summary']
+    summary = summary.replace("<strong>", "*")
+    summary = summary.replace("</strong>", "*")
+    author_name = decoded['content_items'][0]['publication']
+    author_link = decoded['content_items'][0]['host']
+    title = decoded['content_items'][0]['title']
+    title_link = decoded['content_items'][0]['url']
+    pub_type = decoded['content_items'][0]['type']
+    pub_date = decoded['content_items'][0]['date']
+    soundbytes = decoded['content_items'][0]['soundbytes']
+    pub_lang = decoded['content_items'][0]['language']
+    string = {"attachments": [
             {
-                "fallback": x['summary'],
-                "color": "#37517e",
-                "pretext": '  *TransferWise* has a new story',
-                "author_name": x['publication'],
-                "author_link": x['host'],
+                "fallback": decoded['content_items'][0]['summary'],
+                "color": "#00b9ff",
+                "pretext": '  *YOUR_BRAND* has a new story',
+                "author_name": author_name,
+                "author_link": author_link,
                 "author_icon": "",
-                "title": x['title'],
-                "title_link": x['url'],
-                "text": '_' + x['summary'] + '_',
+                "title": title,
+                "title_link": title_link,
+                "text": '_' + summary + '_',
                 "fields": [
                     {
-                        "title": "Level",
-                        "value": x['story_level'],
+                        "title": "Reach",
+                        "value": reach,
                         "short": 'true'
                     },
                     {
                         "title": "Date",
-                        "value": x['date'],
+                        "value": pub_date,
                         "short": 'true'
                     },
                     {
                         "title": "Country",
-                        "value": x['country'],
+                        "value": country,
                         "short": 'true'
                     },
                     {
                         "title": "Message",
-                        "value": x['messages'],
+                        "value": soundbytes,
                         "short": 'true'
                     }
-                ]
+                        ]
             }
-        ]
-        }
-    with open('Output.txt', 'r+') as fobj:
-        textc = fobj.read().strip().split()
-        try:
-            s = idValue
-            if s in textc:
-                print("Matched, ignoring article")
-            else:
-                fobj.write("\n" + idValue)
-                send_message_to_slack(string)
-                print("sending message to slack")
-        except Exception as e:
-            print("There was an error and the script stopped running")
+                            ]
+              }
 
-    time.sleep(20)
+    try:
+        check_id()
+    except OSError as err:
+        print("OS error: {0}".format(err))
+    except ValueError:
+        print("Could not convert data to an integer.")
+    except Exception:
+        print("Unexpected error:", sys.exc_info()[0])
+except Exception as e:
+    print(e)
