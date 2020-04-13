@@ -1,4 +1,4 @@
-# airpr_to_slack
+# Onclusive_to_slack
 Send Onclusive's new coverage to a slack channel
 
 Onclusive to Slack gets your PR team (and the wider company) closer to press coverage, blog mentions and competitor tracking by constantly providing a feed of news content straight to your team slack's channels.
